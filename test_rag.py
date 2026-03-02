@@ -1,5 +1,11 @@
-from query_data import query_rag
+﻿import logging
+
 from langchain_community.llms.ollama import Ollama
+
+from query_data import query_rag
+from settings import LOG_LEVEL, OLLAMA_BASE_URL, OLLAMA_LLM_MODEL
+
+logger = logging.getLogger(__name__)
 
 EVAL_PROMPT = """
 Expected Response: {expected_response}
@@ -29,21 +35,23 @@ def query_and_validate(question: str, expected_response: str):
         expected_response=expected_response, actual_response=response_text
     )
 
-    model = Ollama(model="mistral")
+    model = Ollama(model=OLLAMA_LLM_MODEL, base_url=OLLAMA_BASE_URL)
     evaluation_results_str = model.invoke(prompt)
     evaluation_results_str_cleaned = evaluation_results_str.strip().lower()
 
-    print(prompt)
+    logger.info(prompt)
 
     if "true" in evaluation_results_str_cleaned:
-        # Print response in Green if it is correct.
-        print("\033[92m" + f"Response: {evaluation_results_str_cleaned}" + "\033[0m")
+        logger.info("Response: %s", evaluation_results_str_cleaned)
         return True
-    elif "false" in evaluation_results_str_cleaned:
-        # Print response in Red if it is incorrect.
-        print("\033[91m" + f"Response: {evaluation_results_str_cleaned}" + "\033[0m")
+    if "false" in evaluation_results_str_cleaned:
+        logger.warning("Response: %s", evaluation_results_str_cleaned)
         return False
-    else:
-        raise ValueError(
-            f"Invalid evaluation result. Cannot determine if 'true' or 'false'."
-        )
+
+    raise ValueError("Invalid evaluation result. Cannot determine if 'true' or 'false'.")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=LOG_LEVEL, format="%(levelname)s %(name)s: %(message)s")
+    test_monopoly_rules()
+    test_ticket_to_ride_rules()

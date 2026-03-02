@@ -1,12 +1,15 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import argparse
+import logging
 import re
 from pathlib import Path
 
 from ebooklib import epub
 from bs4 import BeautifulSoup
 from markdownify import markdownify as md
+
+logger = logging.getLogger(__name__)
 
 
 def slugify(name: str) -> str:
@@ -90,29 +93,29 @@ def epub_to_markdown(epub_path: Path, out_dir: Path, split_chapters: bool = Fals
     return out_path
 
 
-def main():
-    ap = argparse.ArgumentParser(description="Convert EPUB to Markdown (.md)")
-    ap.add_argument("input", help="Path ke file .epub atau folder yang berisi .epub")
-    ap.add_argument("-o", "--out", default="md_out", help="Folder output (default: md_out)")
-    ap.add_argument("--split", action="store_true", help="Pisah output per chapter (folder)")
-    args = ap.parse_args()
-
-    inp = Path(args.input)
-    out_dir = Path(args.out)
+def run_cli(input_path: str, output_dir: str, split_chapters: bool) -> None:
+    inp = Path(input_path)
+    out_dir = Path(output_dir)
 
     if inp.is_dir():
         epubs = sorted(inp.rglob("*.epub"))
         if not epubs:
             raise SystemExit(f"Tidak ada .epub di folder: {inp}")
         for p in epubs:
-            result = epub_to_markdown(p, out_dir, split_chapters=args.split)
-            print(f"✅ {p.name} -> {result}")
+            result = epub_to_markdown(p, out_dir, split_chapters=split_chapters)
+            logger.info("%s -> %s", p.name, result)
     else:
         if inp.suffix.lower() != ".epub":
             raise SystemExit("Input harus .epub atau folder berisi .epub")
-        result = epub_to_markdown(inp, out_dir, split_chapters=args.split)
-        print(f"✅ {inp.name} -> {result}")
+        result = epub_to_markdown(inp, out_dir, split_chapters=split_chapters)
+        logger.info("%s -> %s", inp.name, result)
 
 
 if __name__ == "__main__":
-    main()
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+    ap = argparse.ArgumentParser(description="Convert EPUB to Markdown (.md)")
+    ap.add_argument("input", help="Path ke file .epub atau folder yang berisi .epub")
+    ap.add_argument("-o", "--out", default="md_out", help="Folder output (default: md_out)")
+    ap.add_argument("--split", action="store_true", help="Pisah output per chapter (folder)")
+    args = ap.parse_args()
+    run_cli(args.input, args.out, args.split)
