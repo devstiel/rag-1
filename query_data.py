@@ -33,7 +33,7 @@ def main():
     query_rag(args.query_text)
 
 
-def query_rag(query_text: str):
+def query_rag(query_text: str, return_sources: bool = False):
     preflight_check()
 
     db = Chroma(
@@ -42,10 +42,12 @@ def query_rag(query_text: str):
     )
 
     t0 = time.perf_counter()
+    t_retrieval_start = time.perf_counter()
     results = db.similarity_search_with_score(query_text, k=5)
+    t_retrieval = time.perf_counter() - t_retrieval_start
     if not results:
         logger.warning("No results found")
-        return ""
+        return ("", []) if return_sources else ""
 
     context_text = "\n\n---\n\n".join([doc.page_content for doc, _score in results])
 
@@ -56,24 +58,37 @@ def query_rag(query_text: str):
 
     model = OllamaLLM(model=OLLAMA_LLM_MODEL, base_url=OLLAMA_BASE_URL)
 
+    response_text = None
+    t_gen = None
     stop_event = threading.Event()
-    spinner_thread = threading.Thread(
-        target=_spinner,
-        args=("Generating answer... ", stop_event),
-        daemon=True,
-    )
-    spinner_thread.start()
+    spinner_thread = None
+    if sys.stderr.isatty():
+        spinner_thread = threading.Thread(
+            target=_spinner,
+            args=("Generating answer... ", stop_event),
+            daemon=True,
+        )
+        spinner_thread.start()
     try:
+        t_gen_start = time.perf_counter()
         response_text = model.invoke(prompt)
+        t_gen = time.perf_counter() - t_gen_start
     finally:
-        stop_event.set()
-        spinner_thread.join(timeout=1)
-        _clear_line()
+        if spinner_thread is not None:
+            stop_event.set()
+            spinner_thread.join(timeout=1)
+            _clear_line()
 
     sources = [doc.metadata.get("id") for doc, _score in results]
-    logger.info("Query time: %.2fs", time.perf_counter() - t0)
+    logger.info("Retrieval time: %.2fs", t_retrieval)
+    if t_gen is not None:
+        logger.info("Generation time: %.2fs", t_gen)
+    logger.info("Total query time: %.2fs", time.perf_counter() - t0)
     logger.info("Response: %s", response_text)
     logger.info("Sources: %s", sources)
+
+    if return_sources:
+        return response_text, sources
     return response_text
 
 
@@ -81,15 +96,15 @@ def _spinner(message: str, stop_event: threading.Event) -> None:
     frames = "|/-\\"
     idx = 0
     while not stop_event.is_set():
-        sys.stdout.write(f"\r{message}{frames[idx % len(frames)]}")
-        sys.stdout.flush()
+        sys.stderr.write(f"\r{message}{frames[idx % len(frames)]}")
+        sys.stderr.flush()
         idx += 1
         time.sleep(0.1)
 
 
 def _clear_line() -> None:
-    sys.stdout.write("\r" + " " * 80 + "\r")
-    sys.stdout.flush()
+    sys.stderr.write("\r" + " " * 80 + "\r")
+    sys.stderr.flush()
 
 
 if __name__ == "__main__":

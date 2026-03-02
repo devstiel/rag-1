@@ -23,7 +23,9 @@ def _get_available_models() -> set[str]:
         ) from exc
 
     models = {m.get("name") for m in data.get("models", []) if m.get("name")}
-    return models
+    # Normalize by also allowing base names without tag (e.g., "mistral" for "mistral:latest")
+    base_names = {name.split(":", 1)[0] for name in models}
+    return models | base_names
 
 
 def preflight_check() -> None:

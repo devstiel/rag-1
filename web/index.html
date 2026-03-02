@@ -1,0 +1,32 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RAG Chat</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="title">RAG Chat</div>
+        <div class="subtitle">Local documents · Ollama</div>
+      </header>
+
+      <main class="chat" id="chat"></main>
+
+      <form class="composer" id="composer">
+        <input
+          id="query"
+          type="text"
+          placeholder="Ask a question…"
+          autocomplete="off"
+          required
+        />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
