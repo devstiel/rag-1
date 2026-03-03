@@ -1,32 +1,102 @@
 ﻿<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RAG Chat</title>
-    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot</title>
+
+    <!-- Optional: cute handwritten font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Mulish:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
   </head>
+
   <body>
     <div class="app">
-      <header class="header">
-        <div class="title">RAG Chat</div>
-        <div class="subtitle">Local documents · Ollama</div>
-      </header>
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar__top">
+          <div class="brand">
+            <div class="brand__title">Chatbot</div>
+          </div>
 
-      <main class="chat" id="chat"></main>
+          <div class="sidebar__header">
+            <button class="dropdown" type="button">
+              Your Chats <span class="caret">▾</span>
+            </button>
 
-      <form class="composer" id="composer">
-        <input
-          id="query"
-          type="text"
-          placeholder="Ask a question…"
-          autocomplete="off"
-          required
-        />
-        <button type="submit">Send</button>
-      </form>
+            <button id="newChatBtn" class="btn btn--ghost" type="button">
+              + New
+            </button>
+          </div>
+        </div>
+
+        <div id="chatList" class="chatlist"></div>
+
+        <div class="sidebar__bottom">
+          <div class="profile">
+            <div class="profile__avatar" aria-hidden="true">🙂</div>
+            <div class="profile__meta">
+              <div id="profileName" class="profile__name">Username</div>
+              <div class="profile__sub">local</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Vertical dashed divider (like your mock) -->
+      <div class="divider" aria-hidden="true">
+        <div class="divider__dash"></div>
+        <div class="divider__icon">💬</div>
+        <div class="divider__x divider__x--1">✕</div>
+        <div class="divider__x divider__x--2">✕</div>
+      </div>
+
+      <!-- Main -->
+      <main class="main">
+        <div class="bookmark" aria-hidden="true"></div>
+        <div class="edge-scroll" aria-hidden="true">
+          <div class="edge-scroll__btn edge-scroll__btn--top">▴</div>
+          <div class="edge-scroll__track">
+            <div class="edge-scroll__thumb"></div>
+          </div>
+          <div class="edge-scroll__btn edge-scroll__btn--bot">▾</div>
+        </div>
+
+        <section class="stage">
+          <div id="welcome" class="welcome">
+            <h1>Welcome to Chatbot!</h1>
+            <p>Write your prompt as freely.</p>
+          </div>
+
+          <div id="messages" class="messages" aria-live="polite"></div>
+        </section>
+
+        <!-- Composer -->
+        <form id="composerForm" class="composer" autocomplete="off">
+          <button id="usernameBtn" class="usernamePill" type="button" title="Click to change username">
+            Username
+          </button>
+
+          <input
+            id="promptInput"
+            class="composer__input"
+            placeholder=" "
+            maxlength="4000"
+            required
+          />
+
+          <button id="sendBtn" class="sendBtn" type="submit" title="Send">
+            <span class="sendBtn__icon">✈</span>
+          </button>
+        </form>
+      </main>
     </div>
-
-    <script src="app.js"></script>
   </body>
 </html>
