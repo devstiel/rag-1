@@ -8,9 +8,9 @@ from langchain_chroma import Chroma
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_ollama import OllamaLLM
 
-from check_env import preflight_check
-from get_embedding_function import get_embedding_function
-from settings import CHROMA_PATH, LOG_LEVEL, OLLAMA_BASE_URL, OLLAMA_LLM_MODEL
+from .check_env import preflight_check
+from .get_embedding_function import get_embedding_function
+from .settings import CHROMA_PATH, LOG_LEVEL, OLLAMA_BASE_URL, OLLAMA_LLM_MODEL
 
 logger = logging.getLogger(__name__)
 

@@ -2,7 +2,7 @@ import logging
 
 from langchain_ollama import OllamaEmbeddings
 
-from settings import OLLAMA_BASE_URL, OLLAMA_EMBED_MODEL
+from .settings import OLLAMA_BASE_URL, OLLAMA_EMBED_MODEL
 
 logger = logging.getLogger(__name__)
 

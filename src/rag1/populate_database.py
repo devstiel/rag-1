@@ -8,8 +8,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 from langchain_chroma import Chroma
 
-from get_embedding_function import get_embedding_function
-from settings import (
+from .get_embedding_function import get_embedding_function
+from .settings import (
     CHROMA_PATH,
     DATA_PATH,
     CHUNK_OVERLAP,

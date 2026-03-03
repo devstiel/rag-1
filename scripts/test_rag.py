@@ -1,9 +1,17 @@
-﻿import logging
+import logging
+from pathlib import Path
+import sys
 
 from langchain_community.llms.ollama import Ollama
 
-from query_data import query_rag
-from settings import LOG_LEVEL, OLLAMA_BASE_URL, OLLAMA_LLM_MODEL
+# Ensure src/ is on sys.path for package imports when run as a script.
+_ROOT = Path(__file__).resolve().parents[1]
+_SRC = _ROOT / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from rag1.query_data import query_rag
+from rag1.settings import LOG_LEVEL, OLLAMA_BASE_URL, OLLAMA_LLM_MODEL
 
 logger = logging.getLogger(__name__)
 

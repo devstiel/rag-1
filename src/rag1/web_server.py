@@ -4,12 +4,12 @@ import os
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse
 
-from query_data import query_rag
-from settings import LOG_LEVEL
+from .query_data import query_rag
+from .settings import LOG_LEVEL
 
 logger = logging.getLogger(__name__)
 
-WEB_DIR = os.path.join(os.path.dirname(__file__), "web")
+WEB_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "web")
 
 
 class Handler(BaseHTTPRequestHandler):

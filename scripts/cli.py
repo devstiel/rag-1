@@ -1,7 +1,15 @@
 import argparse
 import logging
+from pathlib import Path
+import sys
 
-from settings import LOG_LEVEL
+# Ensure src/ is on sys.path for package imports when run as a script.
+_ROOT = Path(__file__).resolve().parents[1]
+_SRC = _ROOT / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from rag1.settings import LOG_LEVEL
 
 
 def _setup_logging():
@@ -31,19 +39,19 @@ def main():
     args = parser.parse_args()
 
     if args.cmd == "populate":
-        from populate_database import main as populate_main
+        from rag1.populate_database import main as populate_main
 
         populate_main(reset=args.reset)
         return
 
     if args.cmd == "query":
-        from query_data import query_rag
+        from rag1.query_data import query_rag
 
         query_rag(args.query_text)
         return
 
     if args.cmd == "epub-to-md":
-        from epub_to_md import run_cli
+        from rag1.epub_to_md import run_cli
 
         run_cli(args.input, args.out, args.split)
         return

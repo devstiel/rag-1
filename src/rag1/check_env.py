@@ -5,7 +5,7 @@ import logging
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from settings import OLLAMA_BASE_URL, OLLAMA_EMBED_MODEL, OLLAMA_LLM_MODEL
+from .settings import OLLAMA_BASE_URL, OLLAMA_EMBED_MODEL, OLLAMA_LLM_MODEL
 
 logger = logging.getLogger(__name__)
 
